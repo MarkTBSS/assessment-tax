@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/labstack/echo/v4"
-	"net/http"
+	"github.com/MarkTBSS/assessment-tax/config"
+	"github.com/MarkTBSS/assessment-tax/databases"
+	"github.com/MarkTBSS/assessment-tax/server"
 )
 
 func main() {
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, Go Bootcamp!")
-	})
-	e.Logger.Fatal(e.Start(":1323"))
+	conf := config.ConfigGetting()
+	db := databases.NewPostgresDatabase(conf.Database)
+	server := server.NewEchoServer(conf, db)
+	server.Start()
 }
