@@ -3,9 +3,9 @@ package model
 type AllowanceType string
 
 const (
-	Donation          AllowanceType = "donation"
-	PersonalDeduction AllowanceType = "personal_deduction"
-	KReceipt          AllowanceType = "k_receipt"
+	// PersonalDeduction AllowanceType = "personal_deduction"
+	Donation AllowanceType = "donation"
+	KReceipt AllowanceType = "k-receipt"
 )
 
 type TaxRequest struct {
@@ -20,5 +20,15 @@ type Allowance struct {
 }
 
 type TaxResponse struct {
-	Tax float64 `json:"tax"`
+	Tax       float64 `json:"tax,omitempty"`
+	TaxRefund float64 `json:"taxRefund,omitempty"`
+}
+
+func IsAllowanceTypeCorrect(allowances []Allowance) bool {
+	for _, allowance := range allowances {
+		if allowance.AllowanceType != Donation && allowance.AllowanceType != KReceipt {
+			return false
+		}
+	}
+	return true
 }
