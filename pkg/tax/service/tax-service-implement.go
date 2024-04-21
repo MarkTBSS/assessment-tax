@@ -15,41 +15,48 @@ func NewTaxServiceImplement(deductionRepository repository.DeductionRepository) 
 	return &taxServiceImplement{deductionRepository}
 }
 func (s *taxServiceImplement) Calculate(taxRequest *model.TaxRequest) (*model.TaxResponse, error) {
+	if !model.IsAllowanceTypeCorrect(taxRequest.Allowances) {
+		return nil, fmt.Errorf("incorrect allowance type")
+	}
 	deductionList, err := s.deductionRepository.Listing()
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Printf("Personal Deduction : %f\n", deductionList.PersonalDeduction)
-	fmt.Printf("K Reciept : %f\n", deductionList.KReceipt)
-	fmt.Printf("Total Income : %f\n", taxRequest.TotalIncome)
-	fmt.Printf("With Holding Tax : %f\n", taxRequest.WHT)
-	fmt.Println(taxRequest.Allowances)
-	fmt.Println(taxRequest.Allowances)
+	//fmt.Printf("Personal Deduction : %f\n", deductionList.PersonalDeduction)
+	//fmt.Printf("K Reciept : %f\n", deductionList.KReceipt)
+	//fmt.Printf("Total Income : %f\n", taxRequest.TotalIncome)
+	//fmt.Printf("With Holding Tax : %f\n", taxRequest.WHT)
+	//fmt.Println(taxRequest.Allowances)
 
 	totalIncome := taxRequest.TotalIncome
 
-	// Deduction
-	totalTaxableIncome := totalIncome - deductionList.PersonalDeduction
+	// Deduction Personal Deduction from Database
+	totalIncome -= deductionList.PersonalDeduction
+	fmt.Printf("After Personal Deduction : %f\n", totalIncome)
 
 	for _, allowance := range taxRequest.Allowances {
 		switch allowance.AllowanceType {
-		case model.PersonalDeduction, model.KReceipt, model.Donation:
-			totalTaxableIncome -= allowance.Amount
+		case model.Donation:
+			totalIncome -= allowance.Amount
+		case model.KReceipt:
+			if allowance.Amount > deductionList.KReceipt {
+				allowance.Amount = deductionList.KReceipt
+			}
+			totalIncome -= allowance.Amount
 		}
 	}
+	fmt.Printf("After Allowance Deduction : %f\n", totalIncome)
 
-	fmt.Printf("Before Calculate : %f\n", totalTaxableIncome)
+	tax := taxLevel(totalIncome)
+	fmt.Printf("Tax Before With Holding Tax Deduction : %f\n", tax)
 
-	/* การคำนวนภาษีตามขั้นบันใด
-	รายได้ 0 - 150,000 ได้รับการยกเว้น
-	150,001 - 500,000 อัตราภาษี 10%
-	500,001 - 1,000,000 อัตราภาษี 15%
-		1,000,001 - 2,000,000 อัตราภาษี 20%
-	มากกว่า 2,000,000 อัตราภาษี 35% */
+	tax -= taxRequest.WHT
+	fmt.Printf("Tax After With Holding Tax Deduction : %f\n", tax)
 
-	tax := taxLevel(totalTaxableIncome)
-	fmt.Printf("Tax : %f\n", tax)
+	if tax < 0 {
+		return &model.TaxResponse{TaxRefund: -tax}, nil
+	}
 	return &model.TaxResponse{Tax: tax}, nil
 }
 
