@@ -20,8 +20,14 @@ type Allowance struct {
 }
 
 type TaxResponse struct {
-	Tax       float64 `json:"tax,omitempty"`
-	TaxRefund float64 `json:"taxRefund,omitempty"`
+	Tax       float64    `json:"tax,omitempty"`
+	TaxRefund float64    `json:"taxRefund,omitempty"`
+	TaxLevel  []TaxLevel `json:"taxLevel"`
+}
+
+type TaxLevel struct {
+	Level string  `json:"level"`
+	Tax   float64 `json:"tax"`
 }
 
 func IsAllowanceTypeCorrect(allowances []Allowance) bool {
