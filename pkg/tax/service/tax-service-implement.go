@@ -38,6 +38,9 @@ func (s *taxServiceImplement) Calculate(taxRequest *model.TaxRequest) (*model.Ta
 	for _, allowance := range taxRequest.Allowances {
 		switch allowance.AllowanceType {
 		case model.Donation:
+			if allowance.Amount > 100000 {
+				allowance.Amount = 100000
+			}
 			totalIncome -= allowance.Amount
 		case model.KReceipt:
 			if allowance.Amount > deductionList.KReceipt {
