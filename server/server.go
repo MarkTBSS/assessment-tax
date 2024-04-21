@@ -45,6 +45,7 @@ func (s *echoServer) httpListening() {
 
 func (s *echoServer) Start() {
 	s.app.GET("/health", s.healthCheck)
+	s.initTaxRouter()
 
 	// Graceful shutdown
 	quitCh := make(chan os.Signal, 1)
