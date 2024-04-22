@@ -31,7 +31,7 @@ func (s *taxServiceImplement) Calculate(taxRequest *model.TaxRequest) (*model.Ta
 
 	totalIncome := taxRequest.TotalIncome
 	totalIncome -= deductionList.PersonalDeduction
-	fmt.Printf("After Personal Deduction : %f\n", totalIncome)
+	//fmt.Printf("After Personal Deduction : %f\n", totalIncome)
 	for _, allowance := range taxRequest.Allowances {
 		switch allowance.AllowanceType {
 		case model.Donation:
@@ -46,11 +46,11 @@ func (s *taxServiceImplement) Calculate(taxRequest *model.TaxRequest) (*model.Ta
 			totalIncome -= allowance.Amount
 		}
 	}
-	fmt.Printf("After Allowance Deduction : %f\n", totalIncome)
+	//fmt.Printf("After Allowance Deduction : %f\n", totalIncome)
 	tax, taxLevels := taxLevel(totalIncome)
-	fmt.Printf("Tax Before With Holding Tax Deduction : %f\n", tax)
+	//fmt.Printf("Tax Before With Holding Tax Deduction : %f\n", tax)
 	tax -= taxRequest.WHT
-	fmt.Printf("Tax After With Holding Tax Deduction : %f\n", tax)
+	//fmt.Printf("Tax After With Holding Tax Deduction : %f\n", tax)
 	if tax < 0 {
 		return &model.TaxResponse{TaxRefund: -tax, TaxLevel: taxLevels}, nil
 	}

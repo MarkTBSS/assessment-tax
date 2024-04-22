@@ -1,6 +1,9 @@
 package custom
 
 import (
+	"encoding/csv"
+	"io"
+	"strconv"
 	"sync"
 
 	"github.com/go-playground/validator/v10"
@@ -41,4 +44,34 @@ func (r *customEchoRequest) Bind(obj any) error {
 		return err
 	}
 	return nil
+}
+
+// ParseCSV parses a CSV file and returns the records as a slice of maps.
+func ParseCSV(file io.Reader) ([]map[string]float64, error) {
+	reader := csv.NewReader(file)
+	records := make([]map[string]float64, 0)
+	// Read the header
+	header, err := reader.Read()
+	if err != nil {
+		return nil, err
+	}
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		record := make(map[string]float64)
+		for i, value := range row {
+			record[header[i]], err = strconv.ParseFloat(value, 64)
+			if err != nil {
+				return nil, err
+			}
+		}
+		records = append(records, record)
+
+	}
+	return records, nil
 }

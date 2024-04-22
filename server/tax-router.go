@@ -14,4 +14,5 @@ func (s *echoServer) initTaxRouter() {
 	taxController := controller.NewTaxControllerImplement(taxService)
 
 	router.GET("", taxController.Calculate)
+	router.POST("/upload-csv", taxController.CalculateCSV)
 }
