@@ -21,6 +21,21 @@ type echoServer struct {
 	conf *config.Config
 }
 
+func NewEchoServer(conf *config.Config, db databases.Database) *echoServer {
+	echoApp := echo.New()
+	//echoApp.Logger.SetLevel(log.DEBUG)
+	once.Do(func() {
+		server = &echoServer{
+			app:  echoApp,
+			db:   db,
+			conf: conf,
+		}
+	})
+	//log.Printf("Admin Username : %s", conf.Server.Username)
+	//log.Printf("Admin Password : %s", conf.Server.Password)
+	return server
+}
+
 func (s *echoServer) healthCheck(pctx echo.Context) error {
 	return pctx.String(http.StatusOK, "OK")
 }
@@ -46,6 +61,7 @@ func (s *echoServer) httpListening() {
 func (s *echoServer) Start() {
 	s.app.GET("/health", s.healthCheck)
 	s.initTaxRouter()
+	s.initAdminRouter()
 
 	// Graceful shutdown
 	quitCh := make(chan os.Signal, 1)
@@ -59,18 +75,3 @@ var (
 	server *echoServer
 	once   sync.Once
 )
-
-func NewEchoServer(conf *config.Config, db databases.Database) *echoServer {
-	echoApp := echo.New()
-	//echoApp.Logger.SetLevel(log.DEBUG)
-	once.Do(func() {
-		server = &echoServer{
-			app:  echoApp,
-			db:   db,
-			conf: conf,
-		}
-	})
-	log.Printf("Admin Username : %s", conf.Server.Username)
-	log.Printf("Admin Password : %s", conf.Server.Password)
-	return server
-}
