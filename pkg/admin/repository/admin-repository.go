@@ -5,5 +5,6 @@ import (
 )
 
 type PersonalDeductionRepository interface {
-	Setting(amount *model.AmountRequest) (*model.PersonalDeductionResponse, error)
+	SettingPersonalDeduction(amount *model.AmountRequest) (*model.PersonalDeductionResponse, error)
+	SettingKReceipt(amount *model.AmountRequest) (*model.KReceiptResponse, error)
 }

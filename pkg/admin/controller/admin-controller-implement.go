@@ -21,7 +21,23 @@ func NewAdminControllerImplement(adminService service.AdminService) AdminControl
 
 func (c *adminControllerImplement) SetPersonalDeduction(pctx echo.Context) error {
 	if !checkBasicAuth(pctx) {
-		return custom.Error(pctx, http.StatusUnauthorized, errors.New("Unauthorized"))
+		return custom.Error(pctx, http.StatusUnauthorized, errors.New("unauthorized to set personal deduction"))
+	}
+	request := new(model.AmountRequest)
+	validatingContext := custom.NewCustomEchoRequest(pctx)
+	if err := validatingContext.Bind(request); err != nil {
+		return custom.Error(pctx, http.StatusBadRequest, err)
+	}
+	adminResult, err := c.adminService.SetPersonalDeduction(request)
+	if err != nil {
+		return custom.Error(pctx, http.StatusInternalServerError, err)
+	}
+	return pctx.JSON(http.StatusOK, adminResult)
+}
+
+func (c *adminControllerImplement) SetKReceipt(pctx echo.Context) error {
+	if !checkBasicAuth(pctx) {
+		return custom.Error(pctx, http.StatusUnauthorized, errors.New("unauthorized to set k receipt"))
 	}
 	request := new(model.AmountRequest)
 	validatingContext := custom.NewCustomEchoRequest(pctx)

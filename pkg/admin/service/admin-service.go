@@ -6,4 +6,5 @@ import (
 
 type AdminService interface {
 	SetPersonalDeduction(amount *model.AmountRequest) (*model.PersonalDeductionResponse, error)
+	SetKReceipt(amount *model.AmountRequest) (*model.KReceiptResponse, error)
 }
