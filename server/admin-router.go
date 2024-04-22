@@ -14,4 +14,5 @@ func (s *echoServer) initAdminRouter() {
 	adminController := controller.NewAdminControllerImplement(adminService)
 
 	router.POST("/personal", adminController.SetPersonalDeduction)
+	router.POST("/k-receipt", adminController.SetKReceipt)
 }

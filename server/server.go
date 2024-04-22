@@ -31,8 +31,6 @@ func NewEchoServer(conf *config.Config, db databases.Database) *echoServer {
 			conf: conf,
 		}
 	})
-	//log.Printf("Admin Username : %s", conf.Server.Username)
-	//log.Printf("Admin Password : %s", conf.Server.Password)
 	return server
 }
 
