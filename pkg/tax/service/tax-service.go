@@ -51,7 +51,7 @@ func (s *taxServiceImplement) Calculate(taxRequest *model.TaxRequest) (*model.Ta
 		}
 	}
 	//fmt.Printf("After Allowance Deduction : %f\n", totalIncome)
-	tax, taxLevels := taxLevel(totalIncome)
+	tax, taxLevels := TaxLevel(totalIncome)
 	//fmt.Printf("Tax Before With Holding Tax Deduction : %f\n", tax)
 	tax -= taxRequest.WHT
 	//fmt.Printf("Tax After With Holding Tax Deduction : %f\n", tax)
@@ -62,7 +62,7 @@ func (s *taxServiceImplement) Calculate(taxRequest *model.TaxRequest) (*model.Ta
 	}
 }
 
-func taxLevel(taxIncome float64) (float64, []model.TaxLevel) {
+func TaxLevel(taxIncome float64) (float64, []model.TaxLevel) {
 	var tax float64
 	tax = 0.0
 	var totalTax float64
