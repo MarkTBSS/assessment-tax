@@ -35,7 +35,7 @@ func NewEchoServer(conf *config.Config, db databases.Database) *echoServer {
 }
 
 func (s *echoServer) healthCheck(pctx echo.Context) error {
-	return pctx.String(http.StatusOK, "OK")
+	return pctx.String(http.StatusOK, "Welcome")
 }
 
 func (s *echoServer) gracefullyShutdown(quitCh <-chan os.Signal) {

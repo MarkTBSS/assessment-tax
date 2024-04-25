@@ -22,10 +22,10 @@ func NewAdminServiceImplement(adminRepository repository.DeductionRepository) Ad
 
 func (s *adminServiceImplement) SetPersonalDeduction(amount *model.AmountRequest) (*model.PersonalDeductionResponse, error) {
 	if amount.Amount < 10000.00 {
-		return nil, errors.New("amount is required")
+		return nil, errors.New("personal deduction must be greater than 10,000")
 	}
 	if amount.Amount > 100000.00 {
-		amount.Amount = 100000.00
+		return nil, errors.New("personal deduction must be lower than 100,000")
 	}
 	personalDeduction, err := s.adminRepository.SettingPersonalDeduction(amount)
 	if err != nil {
@@ -35,11 +35,11 @@ func (s *adminServiceImplement) SetPersonalDeduction(amount *model.AmountRequest
 }
 
 func (s *adminServiceImplement) SetKReceipt(amount *model.AmountRequest) (*model.KReceiptResponse, error) {
-	if amount.Amount < 10000.00 {
-		return nil, errors.New("amount is required")
+	if amount.Amount < 0.00 {
+		return nil, errors.New("k receipt must be greater than 0")
 	}
 	if amount.Amount > 100000.00 {
-		amount.Amount = 100000.00
+		return nil, errors.New("k receipt must be lower than 100,000")
 	}
 	kReceipt, err := s.adminRepository.SettingKReceipt(amount)
 	if err != nil {
